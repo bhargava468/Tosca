@@ -2,14 +2,15 @@ tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
 
 description: juniper vSRX firewall
 
-metadata:
-  template_name: Juniper_vSRX
-  template_type: VNF
-  ID: Juniper_vSRX
-  vendor: Juniper
-  version: 1.0
-
+imports:
+  - D:\sravanthi\Tosca_yaml_files\nfv\ns\Juniper_vSRX_definition.yaml # Replace <Full directory Path of this file> with full path of directory containing Juniper_vSRX_definition.yaml file
+  
 topology_template:
+  substitution_mappings:
+     node_type: tosca.nodes.nfv.VNF.Juniper
+     requirements:
+        virtualLink1: [CP01, CP02, virtualLink]
+        virtualLink2: [CP03, virtualLink]   
   node_templates:
     Juniper_vSRX_VDU:
       type: tosca.nodes.nfv.VDU.Tacker
@@ -46,14 +47,5 @@ topology_template:
       requirements:
         - virtualBinding:
             node: Juniper_vSRX_VDU
-            
-  policies:
-    - ScalingPolicy:
-        type: tosca.policies.tacker.Scaling
-        properties:
-          increment: 1
-          min_instances: 1
-          max_instances: 3
-          default_instances: 1
-          targets: [Juniper_vSRX_VDU]    
+    
     
