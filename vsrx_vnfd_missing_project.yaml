@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0_0
+
+description: juniper vSRX firewall
+
+metadata:
+  template_name: Juniper_vSRX_VNFD
+
+topology_template:
+  node_templates:
+    
+      type: tosca.nodes.nfv.VNF
+      properties:
+        id: vSRX_firewall
+        vendor: Juniper
+        version: 1.0
+      requirements:
+      
+    vSRX_VDU:
+      type: tosca.nodes.nfv.VDU
+      artifacts:
+          VM_image: vsrx-12.1X47-D20.7-npaas-v0.3
+      capabilities:
+        host:
+          properties:
+            num_cpus: 2
+            mem_size: 4 GB
+            disk_size: 20 GB
+
+    CP01:
+       type: tosca.nodes.nfv.CP
+       properties:
+        type: vPort
+       requirements:
+          - virtualLink: mgmt-net
+          - virtualBinding: vSRX_VDU
+    CP02:
+       type: tosca.nodes.nfv.CP
+       properties:
+        type: vPort
+       requirements:
+          - virtualLink: pkt-in
+          - virtualBinding: vSRX_VDU
+          
+    CP03:
+      type: tosca.nodes.nfv.CP
+      properties:
+        type: vPort
+      requirements:
+        - virtualLink: pkt-out
+        - virtualBinding: vSRX_VDU
+
+    mgmt-net:
+      type: tosca.nodes.nfv.VL
+      properties:
+        vendor: Orcl Networks
+    pkt-in:
+      type: tosca.nodes.nfv.VL
+      properties:
+        vendor: Oracle Networks
+    pkt-out:
+       type: tosca.nodes.nfv.VL
+       properties:
+         vendor: Juniper
